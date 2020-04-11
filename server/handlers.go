@@ -8,7 +8,7 @@ import (
 func HandleCreateMessage(ctx *fasthttp.RequestCtx) {
 	payload := ctx.PostBody()
 
-	message := Message{ Payload: payload }
+	message := Message{Payload: payload}
 
 	err := json.Unmarshal(payload, &message)
 	if err != nil {
