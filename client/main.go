@@ -22,7 +22,7 @@ func Post(requestURI string, payload []byte) (*fasthttp.Response, error) {
 	req.Header.SetMethod(fasthttp.MethodPost)
 	req.SetBody(payload)
 
-	var timeOut = 3 * time.Second
+	var timeOut = 30 * time.Second
 	var err = fasthttp.DoTimeout(req, resp, timeOut)
 	if err != nil {
 		return nil, err

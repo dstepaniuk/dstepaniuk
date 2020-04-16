@@ -2,20 +2,31 @@ package main
 
 import (
 	"encoding/json"
+	"log"
 
 	"github.com/valyala/fasthttp"
 )
 
-func HandleCreateMessage(ctx *fasthttp.RequestCtx) {
-	payload := ctx.PostBody()
+type Api struct {
+	worker *Worker
+}
 
-	message := Message{Payload: payload}
+func NewApi(w *Worker) *Api {
+	return &Api{worker: w}
+}
 
-	err := json.Unmarshal(payload, &message)
-	if err != nil {
+func (api *Api) HandleCreateMessage(ctx *fasthttp.RequestCtx) {
+	var m Message
+	body := ctx.PostBody()
+	if err := json.Unmarshal(body, &m); err != nil {
 		ctx.SetStatusCode(fasthttp.StatusBadRequest)
+		log.Println(err)
+		return
 	}
+	m.Payload = make([]byte, len(body))
+	copy(m.Payload, body)
 
-	CreateMessage(message)
+	api.worker.Messages <- m
+
 	ctx.SetStatusCode(fasthttp.StatusNoContent)
 }
